@@ -1,0 +1,13 @@
+{
+  "Backups":
+  [
+    {
+      "Path": "/mnt/backup/mysql",
+      "Name": "mysql",
+      "Pattern": "/.+(\\d\\d\\d\\d-\\d\\d-\\d\\d)\\.sql\\.gz/",
+      "Daily": 7,
+      "Weekly": 8,
+      "Monthly": 12
+    }
+  ]
+}
