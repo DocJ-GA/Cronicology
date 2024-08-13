@@ -8,6 +8,8 @@ Syslog.Write("Starting up the cronicology application.");
 
 // Load configuration files.
 
+var configs = JsonConvert.DeserializeObject<Configurations>(File.ReadAllText("config.json")) ?? new Configurations();
+
 
 
 

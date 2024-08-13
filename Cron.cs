@@ -12,7 +12,9 @@ namespace Cronicology
     internal class Cron
     {
         public static string PSFName { get; set; } = "cronicology.psf";
+
         public static string Path { get; set; } = "/opt/psf";
+
         public static string PSF
         {
             get
@@ -20,14 +22,19 @@ namespace Cronicology
                 return Path + "/" + PSFName;
             }
         }
+
         public static DateTime StartTime { get; set; }
+
         public static DateTime StopTime { get; set; }
+
         public static Configurations Config { get; set; }
+
 
         Cron()
         {
             Config = JsonConvert.DeserializeObject<Configurations>("config.json") ?? new Configurations();
         }
+
 
         public static void Start(string message = "Starting Cronicology.")
         {
@@ -73,17 +80,21 @@ namespace Cronicology
             }
         }
 
+
         public static void Fail(string message = "Ending Cronicology in a failed state.")
         {
-            Syslog.Write(message, Syslog.Level.Err);
-            Syslog.Write("Writing failed to PSF file.");
+            Log(message, Syslog.Level.Err);
             File.WriteAllText(PSF, "failed");
         }
 
-        public static void Complete()
-        {
 
+        public static void Complete(string message = "Cronicology complete.")
+        {
+            Log(message);
+            Log("Writing complete to PSF file.", system: false);
+            File.AppendAllText("complete", PSF);
         }
+
 
         public static void Log(string message, Syslog.Level level = Level.Info, string identity = "cronicology", bool system = true)
         {
