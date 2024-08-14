@@ -11,40 +11,33 @@ namespace Cronicology
 {
     internal class Cron
     {
-        public static string PSFName { get; set; } = "cronicology.psf";
+        public DateTime StartTime { get; set; }
 
-        public static string Path { get; set; } = "/opt/psf";
+        public DateTime StopTime { get; set; }
 
-        public static string PSF
+        public Configurations Config { get; set; }
+
+
+        public Cron()
         {
-            get
-            {
-                return Path + "/" + PSFName;
-            }
+            Config = new Configurations();
         }
 
-        public static DateTime StartTime { get; set; }
-
-        public static DateTime StopTime { get; set; }
-
-        public static Configurations Config { get; set; }
-
-
-        Cron()
+        public Cron(Configurations config)
         {
-            Config = JsonConvert.DeserializeObject<Configurations>("config.json") ?? new Configurations();
+            Config = config;
         }
 
 
-        public static void Start(string message = "Starting Cronicology.")
+        public void Start(string message = "Starting Cronicology.")
         {
             Log(message);
 
             // Lets see if the process is running.
-            if (File.Exists(PSF))
+            if (File.Exists(Config.PSF))
             {
                 // The file exists, it may still be running.
-                var status = File.ReadAllText(PSF);
+                var status = File.ReadAllText(Config.PSF);
                 if (status != "complete")
                 {
                     // The status of the file seems to imply it is running. Exiting.
@@ -54,20 +47,20 @@ namespace Cronicology
             }
 
             // Updating the process status file.
-            Log("Writing the process status file at '" + PSF + "'.", system: false);
-            File.AppendAllText(PSF, "started");
+            Log("Writing the process status file at '" + Config.PSF + "'.", system: false);
+            File.AppendAllText(Config.PSF, "started");
 
             // Starting the log.
             if (File.Exists(Config.Log))
             {
                 // Log file exists. Checking size.
                 var info = new FileInfo(Config.Log);
-                if (info.Length > 10*1024*1024)
+                if (info.Length > Config.LogMaxSize*1024*1024)
                 {
                     // Log file is greater than 10 MiB so it needs rotated.
                     Log("Log file greater than 10 MiB, rotating it.");
                     Log(DateTime.Now.ToString("s") + ": Rotating log file", system: false);
-                    File.Move(Config.Log, Config.LogPath + "/" + Config.LogFile + ".old." + DateTime.Now.ToString("s"));
+                    File.Move(Config.Log, Config.LogPath + "/cronicology.old." + DateTime.Now.ToString("s"));
                     File.Create(Config.Log);
                     Log(DateTime.Now.ToString("s") + ": Log file created.", system: false);
                 }
@@ -81,22 +74,22 @@ namespace Cronicology
         }
 
 
-        public static void Fail(string message = "Ending Cronicology in a failed state.")
+        public void Fail(string message = "Ending Cronicology in a failed state.")
         {
             Log(message, Syslog.Level.Err);
-            File.WriteAllText(PSF, "failed");
+            File.WriteAllText(Config.PSF, "failed");
         }
 
 
-        public static void Complete(string message = "Cronicology complete.")
+        public void Complete(string message = "Cronicology complete.")
         {
             Log(message);
             Log("Writing complete to PSF file.", system: false);
-            File.AppendAllText("complete", PSF);
+            File.AppendAllText("complete", Config.PSF);
         }
 
 
-        public static void Log(string message, Syslog.Level level = Level.Info, string identity = "cronicology", bool system = true)
+        public void Log(string message, Syslog.Level level = Level.Info, string identity = "cronicology", bool system = true)
         {
             if (system) Syslog.Write(message, level, identity);
 

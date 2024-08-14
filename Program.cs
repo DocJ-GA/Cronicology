@@ -2,25 +2,24 @@
 
 using Cronicology;
 using Newtonsoft.Json;
+using Tomlyn;
 
 
 Syslog.Write("Starting up the cronicology application.");
 
 // Load configuration files.
 
-var configs = JsonConvert.DeserializeObject<Configurations>(File.ReadAllText("config.json")) ?? new Configurations();
+var config = new Configurations();
+var cron = new Cron();
 
+Console.WriteLine("Backups: " + cron.Config.Backups.Count + "\n" + "Path 1: " + cron.Config.Backups.First().Path);
 
-
-
-Console.WriteLine("Backups: " + configs.Backups.Count + "\n" + "Path 1: " + configs.Backups.First().Path);
-
-var files = Directory.GetFiles(configs.Backups.First().Path);
+var files = Directory.GetFiles(cron.Config.Backups.First().Path);
 foreach (var file in files)
 {
-    Console.WriteLine(configs.Backups.First().Pattern.IsMatch(file) + " :: " + configs.Backups.First().Pattern.Match(file).Groups[1].Value);
+    Console.WriteLine(cron.Config.Backups.First().Pattern.IsMatch(file) + " :: " + cron.Config.Backups.First().Pattern.Match(file).Groups[1].Value);
 }
 
-Console.WriteLine(configs.Backups.First().Pattern.ToString());
+Console.WriteLine(cron.Config.Backups.First().Pattern.ToString());
 
 Console.WriteLine("Hello, World!");

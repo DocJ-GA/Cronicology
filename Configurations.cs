@@ -13,21 +13,23 @@ namespace Cronicology
 
         public List<Backup> Backups { get; set; }
 
+        public string LogPath { get; set; } = "/var/log/cronicology";
 
-        public string LogFile { get; set; } = "cronicology.log";
+        public float LogMaxSize { get; set; } = 10;
 
+        public int LogMaxOld { get; set; } = 5;
 
-        public string LogPath { get; set; } = "/var/log";
-
+        public string PSF { get; set; }
 
         public string Log
         {
             get
             {
-                return LogPath + "/" + LogFile;
+                if (!LogPath.EndsWith("/"))
+                    LogPath += "/";
+                return LogPath + "/cronicology.log";
             }
         }
-
 
         public Configurations()
         {

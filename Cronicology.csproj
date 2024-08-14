@@ -9,6 +9,13 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Samboy063.Tomlet" Version="5.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="config\config.toml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

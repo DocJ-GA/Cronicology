@@ -1,0 +1,28 @@
+﻿#################################################
+# General configuration for cronicolog.
+# Every possible configuration option is in this 
+# file. View the readme file for valid options.
+#################################################
+
+# Logs
+LogPath = "/var/log/cronicology/" #The path of the log directory.  Make sure it exists and permissions are ok
+LogMaxSize = 10	#Max file size in megabytes.
+LogMaxOld = 5 #Max amount of old log files to hold.
+
+# Cron
+PSF = "/opt/psf/cronicology.psf" #Make sure the directory exists and permissions are ok.
+
+
+#################################################
+# Here is the list of backups you want to
+# cronicle. Each backup should be under its own
+# [[Backup]]
+#################################################
+
+[[Backups]]
+Path = "/mnt/backup/mysql/" #Path to the folder holding the backups.
+Name = "MySql" #The name of the backup.
+Daily = 7 #How many daily backups to keep.
+Weekly = 12 #How many weekly backups to keep.
+Monthly = 12 #How many monthly backups to keep.
+Pattern = ".+(\\d\\d\\d\\d-\\d\\d-\\d\\d)\\.tar\\.gz/" #The regex pattern of the filename.
